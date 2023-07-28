@@ -25,9 +25,8 @@ export const createContact: MutationResolvers['createContact'] = async ({
     data: input,
   })
 
-  console.log('Sending email')
-
   await mailer.send(
+    // ContactUsEmail(),
     // Template component goes here...
     <ContactUsEmail
       name={input.name}
@@ -37,17 +36,19 @@ export const createContact: MutationResolvers['createContact'] = async ({
     />,
     // General options go here...
     {
-      to: 'joshgmwalker@gmail.com',
+      handler: 'nodemailer',
+      from: 'from@example.com',
+      to: 'to@example.com',
+      cc: 'cc@example.com',
+      bcc: 'bcc@example.com',
       subject: 'Contact Us',
+      replyTo: 'replyTo@example.com',
     },
     // Handler-specific options go here...
     {
       // ...
-      subDir: 'contact',
     }
   )
-
-  console.log('Email sent')
 
   return contact
 }

@@ -7,7 +7,8 @@
     ]
   },
   "devDependencies": {
-    "@redwoodjs/core": "6.0.0-canary.706"
+    "@redwoodjs/core": "6.0.0-canary.706",
+    "@types/nodemailer": "6"
   },
   "eslintConfig": {
     "extends": "@redwoodjs/eslint-config",
@@ -176,10 +177,12 @@
     "lodash": "4.17.21",
     "lodash-decorators": "6.0.1",
     "lru-cache": "7.18.3",
+    "mailparser": "^3.6.5",
     "md5": "2.3.0",
     "mime-types": "2.1.35",
     "mini-css-extract-plugin": "2.7.6",
     "msw": "1.2.2",
+    "nodemailer": "6.9.4",
     "nodemon": "2.0.22",
     "null-loader": "4.0.1",
     "param-case": "3.0.4",
@@ -204,6 +207,7 @@
     "rimraf": "5.0.1",
     "secure-random-password": "0.2.3",
     "semver": "7.5.3",
+    "smtp-server": "3.12.0",
     "split2": "4.2.0",
     "sqlite": "4.2.1",
     "sqlite3": "5.1.6",
