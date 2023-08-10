@@ -1,5 +1,3 @@
-import React from 'react'
-
 import type { QueryResolvers, MutationResolvers } from 'types/graphql'
 
 import { db } from 'src/lib/db'
@@ -25,28 +23,40 @@ export const createContact: MutationResolvers['createContact'] = async ({
     data: input,
   })
 
+  // Notes JGMW:
+  // - Consider moving the "handler" option out of the generalOptions object
+  // - Expand the options for defaults eg headers
+
   await mailer.send(
-    // ContactUsEmail(),
     // Template component goes here...
-    <ContactUsEmail
-      name={input.name}
-      email={input.email}
-      message={input.message}
-      when={new Date()}
-    />,
+    ContactUsEmail({
+      name: input.name,
+      email: input.email,
+      message: input.message,
+      when: new Date(),
+    }),
     // General options go here...
     {
-      handler: 'nodemailer',
-      from: 'from@example.com',
-      to: 'to@example.com',
-      cc: 'cc@example.com',
-      bcc: 'bcc@example.com',
+      handler: 'resend',
+      from: 'to@examepl.com',
+      to: mailer.formatAddress('name <to@example.com>', 'To Name'),
+      cc: mailer.formatAddress('cc@example.com', 'CC Name'),
+      bcc: mailer.formatAddress('bcc@example.com', 'BCC Name'),
       subject: 'Contact Us',
-      replyTo: 'replyTo@example.com',
+      replyTo: mailer.formatAddress(input.email, input.name),
+      headers: {
+        'X-MyHeader': 'My value',
+        example: 'example',
+      },
+      attachments: [
+        {
+          filename: 'text1.txt',
+          content: 'hello world!',
+        },
+      ],
     },
-    // Handler-specific options go here...
     {
-      // ...
+      tags: undefined,
     }
   )
 
