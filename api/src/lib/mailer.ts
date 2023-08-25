@@ -1,39 +1,69 @@
 import { Mailer } from '@redwoodjs/mailer-core'
 import { InMemoryMailHandler } from '@redwoodjs/mailer-handler-in-memory'
 import { NodemailerMailHandler } from '@redwoodjs/mailer-handler-nodemailer'
-import { ResendMailHandler } from '@redwoodjs/mailer-handler-resend'
 import { StudioMailHandler } from '@redwoodjs/mailer-handler-studio'
+import { MJMLReactRenderer } from '@redwoodjs/mailer-renderer-mjml-react'
+import { ReactEmailRenderer } from '@redwoodjs/mailer-renderer-react-email'
 
 import { logger } from './logger'
 
-// TODO:
-// - [ ] Be defensive about mailer send options
-
-// Handlers are how your mail gets sent. You can have multiple handlers to suit your unique needs.
-// Each handler must be identified by a unique name and you can specify a default handler in the config
-// to your Mailer.
-
 const handlers = {
-  memory: new InMemoryMailHandler(),
+  inMemory: new InMemoryMailHandler(),
   studio: new StudioMailHandler(),
-  resend: new ResendMailHandler({ token: process.env.RESEND_TOKEN }),
-  nodemailer: new NodemailerMailHandler({
+  prod: new NodemailerMailHandler({
+    // This is the connection info for the studio mail server
     transport: {
       host: 'localhost',
       port: 4319,
+      secure: false,
     },
   }),
 }
 
-export const mailer = new Mailer(handlers, {
+const renderers = {
+  reactEmail: new ReactEmailRenderer(),
+  mjml: new MJMLReactRenderer(),
+}
+
+export const mailer = new Mailer({
+  handling: {
+    handlers,
+    default: 'prod',
+  },
+
+  rendering: {
+    renderers,
+    default: 'reactEmail',
+    options: {
+      reactEmail: {
+        outputFormat: 'both',
+        pretty: true,
+      },
+      // mjml: {
+      //   outputFormat: 'html',
+      // },
+    },
+  },
+
+  defaults: {
+    replyTo: 'noreply@example.com',
+    attachments: [
+      {
+        content: 'Hello world!',
+        filename: 'hello_defaultSendOptions.txt',
+      },
+    ],
+  },
+
+  test: {
+    handler: 'inMemory',
+    when: () => process.env.NODE_ENV === 'test',
+  },
+
+  development: {
+    handler: 'studio',
+    when: process.env.NODE_ENV !== 'production',
+  },
+
   logger,
-
-  defaultHandler: 'nodemailer',
-  defaultFrom: 'onboarding@resend.dev',
-
-  isTest: process.env.NODE_ENV === 'test', // TODO: Optional will include a sensible default
-  testHandler: 'memory', // TODO: Optional will include a sensible default
-
-  isDev: () => process.env.NODE_ENV !== 'production', // TODO: Optional will include a sensible default
-  devHandler: 'studio', // TODO: Optional will include a sensible default
 })

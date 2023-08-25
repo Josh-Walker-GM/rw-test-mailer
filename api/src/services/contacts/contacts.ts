@@ -4,6 +4,7 @@ import { db } from 'src/lib/db'
 import { logger } from 'src/lib/logger'
 import { mailer } from 'src/lib/mailer'
 import { ContactUsEmail } from 'src/mail/ContactUs'
+import { MJMLTest } from 'src/mail/MJMLTest'
 
 export const contacts: QueryResolvers['contacts'] = () => {
   return db.contact.findMany()
@@ -23,42 +24,98 @@ export const createContact: MutationResolvers['createContact'] = async ({
     data: input,
   })
 
-  // Notes JGMW:
-  // - Consider moving the "handler" option out of the generalOptions object
-  // - Expand the options for defaults eg headers
-
+  mailer.getTestHandler().clearInbox()
   await mailer.send(
     // Template component goes here...
     ContactUsEmail({
       name: input.name,
       email: input.email,
       message: input.message,
-      when: new Date(),
+      when: new Date().toLocaleString(),
     }),
     // General options go here...
     {
-      handler: 'resend',
-      from: 'to@examepl.com',
-      to: mailer.formatAddress('name <to@example.com>', 'To Name'),
-      cc: mailer.formatAddress('cc@example.com', 'CC Name'),
-      bcc: mailer.formatAddress('bcc@example.com', 'BCC Name'),
-      subject: 'Contact Us',
-      replyTo: mailer.formatAddress(input.email, input.name),
-      headers: {
-        'X-MyHeader': 'My value',
-        example: 'example',
+      handler: 'prod',
+      from: 'alice@example.com',
+      to: [
+        {
+          address: 'bob@example.com',
+          name: 'Bob Testinger',
+        },
+      ],
+      // cc: { address: 'alice@example.com' },
+      // bcc: 'eve@example.com',
+      subject: 'React Email Test',
+    },
+    {
+      dkim: undefined,
+    }
+  )
+
+  console.log('Inbox:', mailer.getTestHandler().inbox.length)
+  await mailer.send(
+    // Template component goes here...
+    MJMLTest(),
+    // General options go here...
+    {
+      renderer: 'mjml',
+      from: 'alice@example.com',
+      to: {
+        address: 'bob@example.com',
+        name: 'Bob Testinger',
       },
+      cc: { address: 'alice@example.com' },
+      bcc: 'eve@example.com',
+      subject: 'MJML React Test',
       attachments: [
         {
-          filename: 'text1.txt',
-          content: 'hello world!',
+          content: 'Hello world - sendOptions!',
+          filename: 'hello_sendOptions.txt',
+        },
+      ],
+    }
+  )
+  console.log('Inbox:', mailer.getTestHandler().inbox.length)
+  await mailer.sendWithoutRendering(
+    // Template component goes here...
+    {
+      html: '<h1>Prerendered Email HTML</h1>',
+      text: 'Prerendered Email Text',
+    },
+    // General options go here...
+    {
+      handler: 'prod',
+      from: { address: 'alice@example.com', name: 'Alice McExampleton' },
+      to: {
+        address: 'bob@example.com',
+        name: 'Bob Testinger',
+      },
+      cc: [
+        {
+          address: 'alice@example.com',
+          name: 'Alice McExampleton',
+        },
+        { address: 'alice2@example.com' },
+      ],
+      bcc: 'eve@example.com',
+      subject: 'Prerendered Test',
+      attachments: [
+        {
+          content: 'Hello world - sendOptions!',
+          filename: 'hello_sendOptions.txt',
         },
       ],
     },
     {
-      tags: undefined,
+      attachments: [
+        {
+          content: 'Hello world - handlerOptions!',
+          filename: 'hello_handlerOptions.txt',
+        },
+      ],
     }
   )
+  console.log('Inbox:', mailer.getTestHandler().inbox.length)
 
   return contact
 }

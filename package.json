@@ -263,6 +263,7 @@
     "vite": "node /home/josh/Development/redwood/rw-test-mailer/node_modules/@redwoodjs/vite/bins/vite.mjs",
     "msw": "node /home/josh/Development/redwood/rw-test-mailer/node_modules/@redwoodjs/web/dist/bins/msw.js",
     "storybook": "node /home/josh/Development/redwood/rw-test-mailer/node_modules/@redwoodjs/web/dist/bins/storybook.js",
-    "webpack": "node /home/josh/Development/redwood/rw-test-mailer/node_modules/@redwoodjs/web/dist/bins/webpack.js"
+    "webpack": "node /home/josh/Development/redwood/rw-test-mailer/node_modules/@redwoodjs/web/dist/bins/webpack.js",
+    "rw-web-server": "node /home/josh/Development/redwood/rw-test-mailer/node_modules/@redwoodjs/web-server/dist/server.js"
   }
 }

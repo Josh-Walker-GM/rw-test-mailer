@@ -56,4 +56,16 @@ describe('contacts', () => {
 
     expect(result).toEqual(null)
   })
+
+  // Example:
+  // I am sending the user a welcome email
+  // const inbox = mailer.getTestHandler().inbox
+  // expect(inbox.length).toEqual(1)
+  // const userWelcomeEmail = inbox[0]
+  // expect(userWelcomeEmail.handler).toEqual('sendGrid')
+  // expect(userWelcomeEmail.subject).toEqual('React Email Test')
+  // expect(userWelcomeEmail.to).toEqual(['user@example.com'])
+  // expect(userWelcomeEmail.handlerOptions).toEqual({
+  //   dkim: undefined,
+  // })
 })

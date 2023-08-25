@@ -3,10 +3,15 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
+    "@faire/mjml-react": "3.3.0",
     "@react-email/components": "0.0.7",
     "@redwoodjs/api": "6.0.0-canary.706",
     "@redwoodjs/auth-dbauth-api": "6.0.0-canary.706",
     "@redwoodjs/graphql-server": "6.0.0-canary.706",
+    "mjml": "4.14.1",
     "react": "18.3.0-canary-035a41c4e-20230704"
+  },
+  "devDependencies": {
+    "@types/mjml": "^4.7.1"
   }
 }
